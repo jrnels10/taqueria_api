@@ -5,6 +5,7 @@ import {
   ValidationPipe,
   UseGuards,
   Get,
+  Req,
 } from '@nestjs/common';
 import {
   AuthCredentialsDto,
@@ -37,6 +38,14 @@ export class AuthController {
     return user;
   }
 
+  @Get('/signInToken')
+  @UseGuards(AuthGuard('jwt'))
+  signInToken(@Req() req): { user: User } {
+    const { user } = req;
+    delete user.password;
+    delete user.salt;
+    return user;
+  }
   @Post('/test')
   @UseGuards(AuthGuard())
   test(@GetUser() user: User) {

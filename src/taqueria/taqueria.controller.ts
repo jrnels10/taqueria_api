@@ -33,12 +33,9 @@ export class TaqueriaController {
     @Body() CreateTaqueriaDto: CreateTaqueriaDto,
     @GetUser() user: User,
   ): Promise<Taqueria> {
-    console.log(user);
-    if (user.userType !== 'OWNER') {
-      throw new UnauthorizedException('Invalid credentials');
-    }
     return this.taqueriaService.createTaqueria(CreateTaqueriaDto, user);
   }
+
   @Get('getall')
   getAllTaquerias(@Query(ValidationPipe) filterDto: GetTaqueriaDto) {
     return this.taqueriaService.getAllTaquerias(filterDto);
@@ -47,6 +44,11 @@ export class TaqueriaController {
   @Get('/:id')
   getTaqueriaById(@Param('id', ParseIntPipe) id: number) {
     return this.taqueriaService.getTaqueriaById(id);
+  }
+  @Get('/my/:userId')
+  @UseGuards(AuthGuard())
+  getMyTaquerias(@Param('userId', ParseIntPipe) userId: number) {
+    return this.taqueriaService.getMyTaquerias(userId);
   }
 
   @Patch(':id/status')

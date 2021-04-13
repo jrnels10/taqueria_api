@@ -39,4 +39,9 @@ export class AuthService {
     );
     return { accessToken, user };
   }
+
+  async findByPayLoad(payload: any) {
+    const { userId } = payload;
+    return await this.userepository.findOne({ id: userId });
+  }
 }

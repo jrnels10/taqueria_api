@@ -25,7 +25,13 @@ export class TaqueriaService {
     }
     return found;
   }
-
+  async getMyTaquerias(userId: number): Promise<Taqueria[]> {
+    const found = await this.TaqueriaRepository.find({ where: { userId } });
+    if (!found) {
+      throw new NotFoundException();
+    }
+    return found;
+  }
   getAllTaquerias(filterDto: GetTaqueriaDto): Promise<Taqueria[]> {
     return this.TaqueriaRepository.getAllTaquerias(filterDto);
   }
