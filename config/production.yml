@@ -1,5 +1,5 @@
 server:
-  origin: http://localhost:3000
+  origin: https://607c613e88aa35000712a8d3--modest-mirzakhani-e930e2.netlify.app/
 
 db:
   synchronize: false
