@@ -31,7 +31,10 @@ export class Taqueria extends BaseEntity {
 
   @Column({ nullable: true })
   timeClose: Date;
-
+  @Column({ nullable: true })
+  address: string;
+  @Column({ nullable: true })
+  daysOfTheWeek: string;
   @Column()
   status: TaqueriaStatus;
 

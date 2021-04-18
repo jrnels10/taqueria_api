@@ -29,7 +29,7 @@ export class TaqueriaRepository extends Repository<Taqueria> {
 
     if (search) {
       query.andWhere(
-        '(taqueria.name LIKE :search OR taqueria.description LIKE :search)',
+        '(lower(taqueria.name) LIKE :search OR lower(taqueria.description) LIKE :search)',
         { search: `%${search}%` },
       );
     }
@@ -46,12 +46,19 @@ export class TaqueriaRepository extends Repository<Taqueria> {
     CreateTaqueriaDto: CreateTaqueriaDto,
     user: User,
   ): Promise<Taqueria> {
-    const { name, description, latitude, longitude } = CreateTaqueriaDto;
+    const {
+      name,
+      description,
+      latitude,
+      longitude,
+      daysOfTheWeek,
+    } = CreateTaqueriaDto;
     const taqueria = new Taqueria();
     taqueria.name = name;
     taqueria.description = description;
     taqueria.latitude = latitude;
     taqueria.longitude = longitude;
+    taqueria.daysOfTheWeek = daysOfTheWeek;
     taqueria.status = TaqueriaStatus.CLOSED;
     taqueria.user = user;
     await taqueria.save();

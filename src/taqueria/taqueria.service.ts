@@ -70,6 +70,7 @@ export class TaqueriaService {
     taqueria.timeClose = Taqueria.timeClose;
     taqueria.timeOpen = Taqueria.timeOpen;
     taqueria.description = Taqueria.description;
+    taqueria.daysOfTheWeek = Taqueria.daysOfTheWeek;
     await taqueria.save();
     return taqueria;
   }

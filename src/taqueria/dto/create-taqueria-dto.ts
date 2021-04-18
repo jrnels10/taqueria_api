@@ -8,4 +8,5 @@ export class CreateTaqueriaDto {
   latitude: number;
   @IsNotEmpty()
   longitude: number;
+  daysOfTheWeek: string;
 }
