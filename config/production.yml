@@ -1,5 +1,5 @@
 server:
-  origin: https://607c613e88aa35000712a8d3--modest-mirzakhani-e930e2.netlify.app/
+  origin: https://modest-mirzakhani-e930e2.netlify.app/
 
 db:
   synchronize: true

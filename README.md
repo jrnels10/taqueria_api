@@ -73,3 +73,6 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
   Nest is [MIT licensed](LICENSE).
+
+
+https://dev.to/danielmabadeje/how-to-create-tables-on-heroku-postgresql-1n42
