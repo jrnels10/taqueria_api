@@ -5,7 +5,6 @@ import {
   Matches,
   IsEmail,
 } from 'class-validator';
-import { UserType } from '../user.enum';
 
 export class AuthCredentialsDto {
   @IsString()

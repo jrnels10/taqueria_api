@@ -68,6 +68,7 @@ export class TaqueriaController {
     @Body() Taqueria: Taqueria,
     @GetUser() user: User,
   ): Promise<Taqueria> {
+    console.log(Taqueria);
     return this.taqueriaService.updateTaqueriaInfo(id, Taqueria, user);
   }
 }

@@ -5,9 +5,11 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TaqueriaStatus } from './taqueria-status.enum';
+import { GoogleFiles } from '../google-upload/google-upload.entity';
 
 @Entity()
 export class Taqueria extends BaseEntity {
@@ -35,11 +37,19 @@ export class Taqueria extends BaseEntity {
   address: string;
   @Column({ nullable: true })
   daysOfTheWeek: string;
+
   @Column()
   status: TaqueriaStatus;
 
+  @OneToMany(
+    () => GoogleFiles,
+    photo => photo.taqueria,
+    { nullable: true },
+  )
+  photos: GoogleFiles[];
+
   @ManyToOne(
-    type => User,
+    () => User,
     user => user.taquerias,
     { eager: false },
   )

@@ -1,6 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 // import { Event } from 'src/event/event.entity';
 import { Taqueria } from '../taqueria/taqueria.entity';
+import { GoogleFiles } from '../google-upload/google-upload.entity';
 import {
   BaseEntity,
   Entity,
@@ -34,11 +35,13 @@ export class User extends BaseEntity {
   @Column()
   salt: string;
 
-  // @Column({ nullable: true })
-  // homeTown: string;
+  @OneToMany(
+    () => GoogleFiles,
+    photo => photo.user,
+    { nullable: true },
+  )
+  photos: GoogleFiles[];
 
-  // @Column({ length: 2, nullable: true })
-  // homeState: string;
   @OneToMany(
     type => Taqueria,
     Taqueria => Taqueria.user,

@@ -76,3 +76,5 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 
 https://dev.to/danielmabadeje/how-to-create-tables-on-heroku-postgresql-1n42
+
+https://dev.to/baharajr/deploying-a-nestjs-app-with-typeorm-postgresql-on-heroku-55n1

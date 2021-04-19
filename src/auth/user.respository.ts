@@ -8,6 +8,7 @@ import * as bcrypt from 'bcryptjs';
 import {
   ConflictException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 @EntityRepository(User)
@@ -51,7 +52,7 @@ export class UserRepository extends Repository<User> {
       delete user.salt;
       return user;
     } else {
-      return null;
+      throw new UnauthorizedException('Invalid credentials');
     }
   }
 
