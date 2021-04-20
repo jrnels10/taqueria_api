@@ -9,4 +9,7 @@ export class GetTaqueriaDto {
   @IsOptional()
   @IsNotEmpty()
   search: string;
+  @IsOptional()
+  @IsNotEmpty()
+  days: string;
 }

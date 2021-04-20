@@ -20,7 +20,7 @@ export class TaqueriaRepository extends Repository<Taqueria> {
   }
 
   async getAllTaquerias(filterDto: GetTaqueriaDto): Promise<Taqueria[]> {
-    const { status, search } = filterDto;
+    const { status, search, days } = filterDto;
     const query = this.createQueryBuilder('taqueria');
 
     if (status) {
@@ -31,6 +31,14 @@ export class TaqueriaRepository extends Repository<Taqueria> {
       query.andWhere(
         '(lower(taqueria.name) LIKE :search OR lower(taqueria.description) LIKE :search)',
         { search: `%${search}%` },
+      );
+    }
+    if (days) {
+      query.andWhere(
+        'taqueria.daysOfTheWeek SIMILAR TO  :days AND taqueria.daysOfTheWeek IS NOT NULL',
+        {
+          days: `%(${days.split(',').join('|')})%`,
+        },
       );
     }
     try {
