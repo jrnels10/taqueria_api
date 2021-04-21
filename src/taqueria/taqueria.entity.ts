@@ -6,10 +6,12 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TaqueriaStatus } from './taqueria-status.enum';
 import { GoogleFiles } from '../google-upload/google-upload.entity';
+import { Schedule } from './schedule.entity';
 
 @Entity()
 export class Taqueria extends BaseEntity {
@@ -29,14 +31,7 @@ export class Taqueria extends BaseEntity {
   longitude: number;
 
   @Column({ nullable: true })
-  timeOpen: Date;
-
-  @Column({ nullable: true })
-  timeClose: Date;
-  @Column({ nullable: true })
   address: string;
-  @Column({ nullable: true })
-  daysOfTheWeek: string;
 
   @Column()
   status: TaqueriaStatus;
@@ -48,6 +43,12 @@ export class Taqueria extends BaseEntity {
   )
   photos: GoogleFiles[];
 
+  @OneToOne(
+    () => Schedule,
+    schedule => schedule.taqueria,
+  )
+  schedule: Schedule;
+
   @ManyToOne(
     () => User,
     user => user.taquerias,
@@ -57,4 +58,10 @@ export class Taqueria extends BaseEntity {
 
   @Column()
   userId: number;
+
+  @Column({ nullable: true })
+  createDate: Date;
+
+  @Column({ nullable: true })
+  updateDate: Date;
 }

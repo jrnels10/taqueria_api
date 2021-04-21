@@ -67,10 +67,7 @@ export class TaqueriaService {
     taqueria.latitude = Taqueria.latitude;
     taqueria.longitude = Taqueria.longitude;
     taqueria.name = Taqueria.name;
-    taqueria.timeClose = Taqueria.timeClose;
-    taqueria.timeOpen = Taqueria.timeOpen;
     taqueria.description = Taqueria.description;
-    taqueria.daysOfTheWeek = Taqueria.daysOfTheWeek;
     await taqueria.save();
     return taqueria;
   }

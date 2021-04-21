@@ -42,4 +42,10 @@ export class GoogleFiles extends BaseEntity {
 
   @Column()
   userId: number;
+
+  @Column({ nullable: true })
+  createDate: Date;
+
+  @Column({ nullable: true })
+  updateDate: Date;
 }

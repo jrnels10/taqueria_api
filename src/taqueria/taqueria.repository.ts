@@ -5,6 +5,7 @@ import { User } from '../auth/user.entity';
 import { GetTaqueriaDto } from './dto/get-taqueria-dto';
 import { CreateTaqueriaDto } from './dto/create-taqueria-dto';
 import { TaqueriaStatus } from './taqueria-status.enum';
+import { Schedule } from './schedule.entity';
 
 @EntityRepository(Taqueria)
 export class TaqueriaRepository extends Repository<Taqueria> {
@@ -26,20 +27,29 @@ export class TaqueriaRepository extends Repository<Taqueria> {
     if (status) {
       query.where('taqueria.status=:status', { status });
     }
-
     if (search) {
       query.andWhere(
         '(lower(taqueria.name) LIKE :search OR lower(taqueria.description) LIKE :search)',
         { search: `%${search}%` },
       );
     }
+
     if (days) {
-      query.andWhere(
-        'taqueria.daysOfTheWeek SIMILAR TO  :days AND taqueria.daysOfTheWeek IS NOT NULL',
-        {
-          days: `%(${days.split(',').join('|')})%`,
-        },
-      );
+      const daysString = days
+        .split(',')
+        .map((day, idx, arr) => {
+          return `${day} = :trueDay ${arr.length - 1 == idx ? '' : ' OR '}`;
+        })
+        .join('');
+      query
+        .leftJoinAndSelect(
+          Schedule,
+          'schedule',
+          'schedule.tacoId = taqueria.id',
+        )
+        .andWhere(daysString, {
+          trueDay: true,
+        });
     }
     try {
       const taqueria = query.getMany();
@@ -59,19 +69,25 @@ export class TaqueriaRepository extends Repository<Taqueria> {
       description,
       latitude,
       longitude,
-      daysOfTheWeek,
+      openDays,
     } = CreateTaqueriaDto;
     const taqueria = new Taqueria();
+    const schedule = new Schedule();
+    openDays.split(',').map(day => (schedule[day] = true));
     taqueria.name = name;
     taqueria.description = description;
     taqueria.latitude = latitude;
     taqueria.longitude = longitude;
-    taqueria.daysOfTheWeek = daysOfTheWeek;
     taqueria.status = TaqueriaStatus.CLOSED;
     taqueria.user = user;
+    taqueria.schedule = schedule;
+    taqueria.createDate = new Date();
+    schedule.createDate = new Date();
     await taqueria.save();
-
+    schedule.tacoId = taqueria.id;
+    await schedule.save();
     delete taqueria.user;
+    delete schedule.tacoId;
 
     return taqueria;
   }

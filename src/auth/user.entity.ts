@@ -49,6 +49,12 @@ export class User extends BaseEntity {
   )
   taquerias: Taqueria[];
 
+  @Column({ nullable: true })
+  createDate: Date;
+
+  @Column({ nullable: true })
+  updateDate: Date;
+
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
     return hash === this.password;
