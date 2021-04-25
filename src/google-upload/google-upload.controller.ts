@@ -20,7 +20,6 @@ import { Taqueria } from '../taqueria/taqueria.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/auth/user.entity';
 import { GetUser } from 'src/auth/get-user.decorator';
-import { Logger } from '@nestjs/common';
 const keyFilename = './config/grandmasRecipes-49091d2bc82f.json';
 
 @UseGuards(AuthGuard())
