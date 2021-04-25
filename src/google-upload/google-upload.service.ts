@@ -11,13 +11,14 @@ import { Storage } from '@google-cloud/storage';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaqueriaRepository } from 'src/taqueria/taqueria.repository';
 import { User } from 'src/auth/user.entity';
-const keyFilename = './config/gcloud.json';
+const keyFile = './config/gcloud.json';
 import * as config from 'config';
 import { GoogleFiles } from './google-upload.entity';
 import * as sharp from 'sharp';
 import stream, { Stream } from 'stream';
 
 const gCloudConfig = config.get('gcloud');
+const keyFilename = process.env.GCLOUD_PROJECT || keyFile;
 @Injectable()
 export class GoogleUploadService {
   constructor(
