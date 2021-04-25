@@ -28,7 +28,7 @@ export class GoogleUploadService {
     private TaqueriaRepository: TaqueriaRepository,
   ) {}
   private googleService = new Storage({
-    projectId: gCloudConfig.GCLOUD_PROJECT_ID,
+    projectId: process.env.GCLOUD_PROJECT_ID || gCloudConfig.GCLOUD_PROJECT_ID,
     keyFilename,
   });
 
@@ -43,7 +43,9 @@ export class GoogleUploadService {
       'MMDDYYYY_HH:mm:ss',
     )}.${originaName[1]}`;
     const gcFile = this.googleService
-      .bucket(gCloudConfig.GCLOUD_STORAGE_BUCKET)
+      .bucket(
+        process.env.GCLOUD_STORAGE_BUCKET || gCloudConfig.GCLOUD_STORAGE_BUCKET,
+      )
       .file(fileName);
     dataStream.push(file.buffer);
     dataStream.push(null);
@@ -63,7 +65,9 @@ export class GoogleUploadService {
             reject(error);
           })
           .on('finish', () => {
-            const publicUrl = `https://storage.googleapis.com/${gCloudConfig.GCLOUD_STORAGE_BUCKET}/${fileName}`;
+            const publicUrl = `https://storage.googleapis.com/${process.env
+              .GCLOUD_STORAGE_BUCKET ||
+              gCloudConfig.GCLOUD_STORAGE_BUCKET}/${fileName}`;
             gcFile.makePublic();
             resolve(publicUrl);
           });
