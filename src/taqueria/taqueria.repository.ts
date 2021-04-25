@@ -10,15 +10,6 @@ import { Schedule } from './schedule.entity';
 @EntityRepository(Taqueria)
 export class TaqueriaRepository extends Repository<Taqueria> {
   private logger = new Logger('TaqueiraRepository');
-  async getTaqueriaById(
-    filterDto: GetTaqueriaDto,
-    user: User,
-  ): Promise<Taqueria[]> {
-    // const { status, search } = filterDto;
-    // const query = this.createQueryBuilder('taqueria');
-    // query.where('taqueria.')
-    return null;
-  }
 
   async getAllTaquerias(filterDto: GetTaqueriaDto): Promise<Taqueria[]> {
     const { status, search, days } = filterDto;
@@ -45,7 +36,7 @@ export class TaqueriaRepository extends Repository<Taqueria> {
         .leftJoinAndSelect(
           Schedule,
           'schedule',
-          'schedule.tacoId = taqueria.id',
+          'schedule.taqueriaId = taqueria.id',
         )
         .andWhere(daysString, {
           trueDay: true,
@@ -72,22 +63,21 @@ export class TaqueriaRepository extends Repository<Taqueria> {
       openDays,
     } = CreateTaqueriaDto;
     const taqueria = new Taqueria();
-    const schedule = new Schedule();
-    openDays.split(',').map(day => (schedule[day] = true));
     taqueria.name = name;
     taqueria.description = description;
     taqueria.latitude = latitude;
     taqueria.longitude = longitude;
     taqueria.status = TaqueriaStatus.CLOSED;
     taqueria.user = user;
-    taqueria.schedule = schedule;
     taqueria.createDate = new Date();
+    const taco = await taqueria.save();
+    const schedule = new Schedule({});
+    openDays.split(',').map(day => (schedule[day] = true));
     schedule.createDate = new Date();
-    await taqueria.save();
-    schedule.tacoId = taqueria.id;
+    schedule.taqueriaId = taco.id;
     await schedule.save();
+    delete schedule.taqueriaId;
     delete taqueria.user;
-    delete schedule.tacoId;
 
     return taqueria;
   }

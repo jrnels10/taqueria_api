@@ -12,7 +12,7 @@ export class GoogleUploadRepository extends Repository<GoogleFiles> {
     image: any,
     taqueria: Taqueria,
     user: User,
-  ): Promise<string> {
+  ): Promise<GoogleFiles> {
     const { fileUrl, fileName, fileSize } = image;
 
     const photo = new GoogleFiles();
@@ -22,12 +22,12 @@ export class GoogleUploadRepository extends Repository<GoogleFiles> {
     photo.taqueria = taqueria;
     photo.user = user;
     photo.taqueriaId = taqueria.id;
+    photo.createDate = new Date();
 
     await photo.save();
 
     delete photo.user;
     delete photo.taqueria;
-
-    return image;
+    return photo;
   }
 }

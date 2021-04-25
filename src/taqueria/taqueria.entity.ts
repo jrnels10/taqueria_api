@@ -1,9 +1,9 @@
 import { User } from 'src/auth/user.entity';
 import {
   BaseEntity,
-  BeforeInsert,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -46,6 +46,7 @@ export class Taqueria extends BaseEntity {
   @OneToOne(
     () => Schedule,
     schedule => schedule.taqueria,
+    { eager: false },
   )
   schedule: Schedule;
 

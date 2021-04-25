@@ -4,6 +4,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -28,6 +29,7 @@ export class GoogleFiles extends BaseEntity {
     taqueria => taqueria.photos,
     { eager: false },
   )
+  @JoinColumn()
   taqueria: Taqueria;
 
   @Column()

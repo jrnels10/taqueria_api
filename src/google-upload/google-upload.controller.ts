@@ -1,4 +1,3 @@
-import { Storage } from '@google-cloud/storage';
 import {
   Body,
   Controller,
@@ -55,7 +54,7 @@ export class GoogleUploadController {
   deleteImageById(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
-  ) {
+  ): Promise<string> {
     return this.GoogleUploadService.deleteTacoImageById(id, user);
   }
 }

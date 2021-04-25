@@ -11,8 +11,13 @@ import { Storage } from '@google-cloud/storage';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TaqueriaRepository } from 'src/taqueria/taqueria.repository';
 import { User } from 'src/auth/user.entity';
-const keyFilename = './config/grandmasRecipes-49091d2bc82f.json';
+const keyFilename = './config/gcloud.json';
+import * as config from 'config';
+import { GoogleFiles } from './google-upload.entity';
+import * as sharp from 'sharp';
+import stream, { Stream } from 'stream';
 
+const gCloudConfig = config.get('gcloud');
 @Injectable()
 export class GoogleUploadService {
   constructor(
@@ -22,7 +27,7 @@ export class GoogleUploadService {
     private TaqueriaRepository: TaqueriaRepository,
   ) {}
   private googleService = new Storage({
-    projectId: 'grandmasrecipes',
+    projectId: gCloudConfig.GCLOUD_PROJECT_ID,
     keyFilename,
   });
 
@@ -30,36 +35,40 @@ export class GoogleUploadService {
     id: number,
     @UploadedFile() file: Express.Multer.File,
     user: User,
-  ): Promise<string> {
-    const tacoBucket = this.googleService.bucket('mi-taqueria-dev');
+  ): Promise<GoogleFiles> {
+    const dataStream = new Stream.PassThrough();
     const originaName = file.originalname.split('.');
     const fileName = `${originaName[0]}_${moment(new Date()).format(
       'MMDDYYYY_HH:mm:ss',
     )}.${originaName[1]}`;
-    const blob = tacoBucket.file(fileName);
-    const blobStream = blob.createWriteStream();
-    blobStream.on('error', err => {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'Error uploading image!',
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    });
-
-    blobStream.end(file.buffer);
+    const gcFile = this.googleService
+      .bucket(gCloudConfig.GCLOUD_STORAGE_BUCKET)
+      .file(fileName);
+    dataStream.push(file.buffer);
+    dataStream.push(null);
+    const resizer = sharp().resize(800, 600);
     const onCreatePromise = (stream: any) => {
-      return new Promise<string>((res, rej) => {
-        stream.on('finish', async () => {
-          const publicUrl = `https://storage.googleapis.com/${tacoBucket.name}/${fileName}`;
-          await blob.makePublic();
-          res(publicUrl);
-        });
-        stream.on('error', rej);
+      return new Promise((resolve, reject) => {
+        stream
+          .pipe(resizer)
+          .pipe(
+            gcFile.createWriteStream({
+              resumable: false,
+              validation: false,
+              metadata: { 'Cache-Control': 'public, max-age=31536000' },
+            }),
+          )
+          .on('error', (error: Error) => {
+            reject(error);
+          })
+          .on('finish', () => {
+            const publicUrl = `https://storage.googleapis.com/${gCloudConfig.GCLOUD_STORAGE_BUCKET}/${fileName}`;
+            gcFile.makePublic();
+            resolve(publicUrl);
+          });
       });
     };
-    const fileUrl = await onCreatePromise(blobStream);
+    const fileUrl = await onCreatePromise(dataStream);
     const image = {
       fileName,
       fileUrl,
@@ -74,7 +83,7 @@ export class GoogleUploadService {
     return this.GoogleUploadRepository.createImage(image, taqueria, user);
   }
 
-  async deleteTacoImageById(id: number, user: User): Promise<void> {
+  async deleteTacoImageById(id: number, user: User): Promise<string> {
     // Only the owner can delete the image.
     const foundFileMeta = await this.GoogleUploadRepository.findOne({
       where: { id, userId: user.id },
@@ -86,7 +95,7 @@ export class GoogleUploadService {
     // If image is found in Postgres db, then initiate the delete from GoogleCloud
     try {
       this.googleService
-        .bucket('mi-taqueria-dev')
+        .bucket(gCloudConfig.GCLOUD_STORAGE_BUCKET)
         .file(foundFileMeta.fileName)
         .delete();
     } catch (error) {
@@ -106,6 +115,9 @@ export class GoogleUploadService {
     });
     if (results.affected === 0) {
       throw new NotFoundException(`Image with ID "${id}" not found`);
+    } else {
+      console.log('deleted!');
+      return 'deleted!';
     }
   }
 }

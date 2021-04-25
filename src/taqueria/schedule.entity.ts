@@ -13,6 +13,10 @@ import { Taqueria } from './taqueria.entity';
 
 @Entity()
 export class Schedule extends BaseEntity {
+  constructor(partial: Partial<Schedule>) {
+    super();
+    Object.assign(this, partial);
+  }
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,9 +25,6 @@ export class Schedule extends BaseEntity {
 
   @Column({ nullable: true })
   timeClose: Date;
-
-  @Column()
-  tacoId: number;
 
   @Column('boolean', { default: false })
   sunday: boolean;
@@ -48,10 +49,15 @@ export class Schedule extends BaseEntity {
 
   @OneToOne(
     () => Taqueria,
-    taco => taco.schedule,
+    taqueria => taqueria.schedule,
+    { eager: false },
   )
   @JoinColumn()
   taqueria: Taqueria;
+
+  @Column()
+  taqueriaId: number;
+
   @Column({ nullable: true })
   createDate: Date;
 
