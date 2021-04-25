@@ -20,6 +20,7 @@ import { Taqueria } from '../taqueria/taqueria.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/auth/user.entity';
 import { GetUser } from 'src/auth/get-user.decorator';
+import { Logger } from '@nestjs/common';
 const keyFilename = './config/grandmasRecipes-49091d2bc82f.json';
 
 @UseGuards(AuthGuard())
@@ -34,6 +35,7 @@ export class GoogleUploadController {
       storage: memoryStorage(),
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          console.log(file.toString());
           return callback(new Error('Only image files are allowed!'), false);
         }
         callback(null, true);

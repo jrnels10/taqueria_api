@@ -2,6 +2,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
   NotFoundException,
   UploadedFile,
 } from '@nestjs/common';
@@ -29,6 +30,7 @@ export class GoogleUploadService {
     private GoogleUploadRepository: GoogleUploadRepository,
     @InjectRepository(TaqueriaRepository)
     private TaqueriaRepository: TaqueriaRepository,
+    private logger = new Logger('GoogleUpload'),
   ) {}
   private googleService = new Storage({
     projectId: process.env.GCLOUD_PROJECT_ID || gCloudConfig.GCLOUD_PROJECT_ID,
@@ -40,6 +42,7 @@ export class GoogleUploadService {
     @UploadedFile() file: Express.Multer.File,
     user: User,
   ): Promise<GoogleFiles> {
+    this.logger.log('file', file.toString());
     const dataStream = new Stream.PassThrough();
     const originaName = file.originalname.split('.');
     const fileName = `${originaName[0]}_${moment(new Date()).format(
@@ -50,6 +53,7 @@ export class GoogleUploadService {
         process.env.GCLOUD_STORAGE_BUCKET || gCloudConfig.GCLOUD_STORAGE_BUCKET,
       )
       .file(fileName);
+    console.log('gcFile', gcFile);
     dataStream.push(file.buffer);
     dataStream.push(null);
     const resizer = sharp().resize(800, 600);
