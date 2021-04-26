@@ -13,7 +13,7 @@ import { TaqueriaRepository } from 'src/taqueria/taqueria.repository';
 import { User } from 'src/auth/user.entity';
 const keyFilename =
   process.env.NODE_ENV === 'production'
-    ? process.env.GCLOUD_PROJECT
+    ? JSON.stringify(process.env.GCLOUD_PROJECT)
     : './config/gcloud.json';
 import * as config from 'config';
 import { GoogleFiles } from './google-upload.entity';
