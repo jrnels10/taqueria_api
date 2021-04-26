@@ -45,16 +45,17 @@ export class GoogleUploadService {
     const fileName = `${originaName[0]}_${moment(new Date()).format(
       'MMDDYYYY_HH:mm:ss',
     )}.${originaName[1]}`;
+    console.log('testing key file name', process.env.GCLOUD_PROJECT);
     const gcFile = this.googleService
       .bucket(
         process.env.GCLOUD_STORAGE_BUCKET || gCloudConfig.GCLOUD_STORAGE_BUCKET,
       )
       .file(fileName);
-    console.log('gcFile', gcFile);
     dataStream.push(file.buffer);
     dataStream.push(null);
     const resizer = sharp().resize(800, 600);
     const onCreatePromise = (stream: any) => {
+      console.log('testing build of gcFile', gcFile);
       return new Promise((resolve, reject) => {
         stream
           .pipe(resizer)

@@ -33,7 +33,7 @@ export class GoogleUploadController {
     FileInterceptor('file', {
       storage: memoryStorage(),
       fileFilter: (req, file, callback) => {
-        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
           return callback(
             new Error(`Only image files are allowed! ${JSON.stringify(file)}`),
             false,
