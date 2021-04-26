@@ -55,7 +55,7 @@ export class GoogleUploadService {
     dataStream.push(null);
     const resizer = sharp().resize(800, 600);
     const onCreatePromise = (stream: any) => {
-      console.log('testing build of gcFile', gcFile);
+      // console.log('testing build of gcFile', gcFile);
       return new Promise((resolve, reject) => {
         stream
           .pipe(resizer)
@@ -67,6 +67,7 @@ export class GoogleUploadService {
             }),
           )
           .on('error', (error: Error) => {
+            console.log('there was an error with uploading an image!');
             reject(error);
           })
           .on('finish', () => {
