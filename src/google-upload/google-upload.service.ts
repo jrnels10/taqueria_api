@@ -13,7 +13,7 @@ import { TaqueriaRepository } from 'src/taqueria/taqueria.repository';
 import { User } from 'src/auth/user.entity';
 const keyFilename =
   process.env.NODE_ENV === 'production'
-    ? process.env.GCLOUD_PROJECT
+    ? process.env.GOOGLE_APPLICATION_CREDENTIALS
     : './config/gcloud.json';
 import * as config from 'config';
 import { GoogleFiles } from './google-upload.entity';
@@ -45,7 +45,10 @@ export class GoogleUploadService {
     const fileName = `${originaName[0]}_${moment(new Date()).format(
       'MMDDYYYY_HH:mm:ss',
     )}.${originaName[1]}`;
-    console.log('testing key file name', process.env.GCLOUD_PROJECT);
+    console.log(
+      'testing key file name',
+      process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    );
     const gcFile = this.googleService
       .bucket(
         process.env.GCLOUD_STORAGE_BUCKET || gCloudConfig.GCLOUD_STORAGE_BUCKET,
@@ -55,7 +58,6 @@ export class GoogleUploadService {
     dataStream.push(null);
     const resizer = sharp().resize(800, 600);
     const onCreatePromise = (stream: any) => {
-      // console.log('testing build of gcFile', gcFile);
       return new Promise((resolve, reject) => {
         stream
           .pipe(resizer)
