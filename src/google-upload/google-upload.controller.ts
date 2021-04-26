@@ -34,9 +34,8 @@ export class GoogleUploadController {
       storage: memoryStorage(),
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-          console.log(file.toString());
           return callback(
-            new Error(`Only image files are allowed! ${file.toString()}`),
+            new Error(`Only image files are allowed! ${JSON.stringify(file)}`),
             false,
           );
         }
