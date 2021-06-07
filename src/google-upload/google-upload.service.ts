@@ -112,6 +112,7 @@ export class GoogleUploadService {
         .file(foundFileMeta.fileName)
         .delete();
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         {
           status: HttpStatus.FORBIDDEN,
